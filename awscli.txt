@@ -1,0 +1,16 @@
+aws ec2 describe-images --owners amazon --filters Name=name,Values=amzn2-ami-hvm-2.0.????????-x86_64-gp2 Name=state,Values=available --output json --query Images[].[Architecture,ImageId,RootDeviceType,Description]
+aws ec2 describe-images --filters "Name=name,Values=ubuntu*" --query "sort_by(Images, &CreationDate)[].[Name, ImageId, Description,BlockDeviceMappings[*]]"
+
+aws ec2 describe-volumes --query Volumes[*].[VolumeId,Attachments[0].InstanceId,AvailabilityZone,Size,FakeKey] --output text
+
+aws ec2 terminate-instances --instance-ids i-5203422c
+
+aws ec2 create-volume --availability-zone eu-west-3a --volume-type gp2 --size 8 --tag-specifications 'ResourceType=volume,Tags=[{Key=name,Value=test},{Key=cost-center,Value=cc123}]'
+
+
+aws ec2 create-security-group --group-name MySecurityGroup --description "My security group"     --vpc-id vpc-1a2b3c4d
+
+aws ec2 run-instances --block-device-mapping DeviceName=/dev/sda1,Ebs={VolumeSize=100}
+aws ec2 run-instances --block-device-mapping DeviceName=/dev/xvda,Ebs={VolumeSize=100} --image-id ami-0a5e707736615003c --region eu-west-3
+aws ec2 run-instances   --image-id ami-5ec1673e --key-name MyKey --security-groups EC2SecurityGroup --instance-type t2.micro --placement AvailabilityZone=us-west-3a --block-device-mappings DeviceName=/dev/sdh,Ebs={VolumeSize=100} --count 2 --instance-type t2.micro 
+

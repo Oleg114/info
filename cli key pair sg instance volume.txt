@@ -1,0 +1,59 @@
+
+aws ec2 create-security-group --group-name student16-sg --description "test"
+	
+curl http://checkip.amazonaws.com/
+
+aws ec2 describe-images --owners amazon --region eu-west-3 --filters "Name=name,Values=amzn*" --query "sort_by(Images, &CreationDate)[].[Name,ImageId]"
+
+aws ssm get-parameters-by-path --path "/aws/service/ami-amazon-linux-latest" --region eu-west-3
+
+aws ec2 authorize-security-group-ingress --group-name student16-sg --protocol tcp --port 22 --cidr 95.132.129.18/32(home) 77.52.183.35/32(frg)
+aws ec2 describe-security-groups --group-names student16-sg
+
+aws ec2 create-key-pair --region eu-west-3 --key-name student16-key --query KeyMaterial --output text > student16-key.pem
+		#aws ec2 delete-key-pair --key-name student16-key
+
+aws ec2 run-instances --image-id ami-0f962299dc4d90c81 --region eu-west-3 --instance-type t2.micro --key-name student16-key --security-groups student16-sg --tag-specifications ResourceType=instance,Tags=[{Key=Name,Value=student16},{Key=Owner,Value=Rybak}] ResourceType=volume,Tags=[{Key=Name,Value=student16},{Key=Owner,Value=Rybak}] --placement AvailabilityZone=eu-west-3a --block-device-mapping DeviceName=/dev/xvda,Ebs={VolumeSize=11}
+
+aws ec2 describe-instances --filters  Name=tag:Name,Values=student16     #Name=instance-id,Values=i-xxxxx
+aws ec2 describe-instances --region eu-west-3
+aws ec2 describe-instances --filters "Name=instance-type,Values=t2.micro,t3.micro" "Name=availability-zone,Values=eu-west-3a"
+aws ec2 describe-instances --filters  Name=tag:Name,Values=student16 --query "Reservations[*].Instances[*].[InstanceId,Placement.AvailabilityZone,PublicDnsName,State.Name,Tags[*]]" 
+#query only instance id
+aws ec2 describe-instances --filters  Name=tag:Name,Values=student16 --query "Reservations[*].Instances[*].[InstanceId,PublicDnsName]" --output text
+
+	ssh -i student16-key.pem ec2-user@xxxxxx.eu-west-3.compute.amazonaws.com
+		pwd
+		touch test
+
+aws ec2 stop-instances --instance-ids i-YYYYYY
+aws ec2 start-instances --instance-ids i-YYYYYY
+
+aws ec2 create-volume --size 1 --region eu-west-3 --availability-zone eu-west-3a --volume-type gp2 --tag-specifications ResourceType=volume,Tags=[{Key=Name,Value=extra_volume},{Key=task,Value=test}]
+
+aws ec2 describe-volumes --region eu-west-3
+aws ec2 describe-volumes --filters Name=tag:Name,Values=extra_volume
+aws ec2 describe-volumes --filters Name=tag:Name,Values=extra_volume --query Volumes[*].[VolumeId,VolumeType,Attachments[*]] --output text
+
+#If a volume has an AWS Marketplace product code: before attach volume you should stop instance
+aws ec2 attach-volume --volume-id vol-XXXXXXX --instance-id i-YYYYYYYY --device /dev/sdf
+	lsblk  #example for /dev/xvdf
+	sudo file -s /dev/xvdf	#output(“/dev/xvdf: data”)it means your volume is empty
+	sudo mkfs -t ext4 /dev/xvdf
+	sudo mkdir /extra_volume
+	sudo mount /dev/xvdf /extra_volume/
+		umount /dev/xvdf
+			sudo cp /etc/fstab /etc/fstab.bak
+			sudo blkid 		
+						#dev/xvda1: LABEL="/" UUID="ca774df7-756d-4261-a3f1-76038323e572" TYPE="xfs" PARTLABEL="Linux" PARTUUID="02dcd367-e87c-4f2e-9a72-a3cf8f299c10"
+						#/dev/xvdf: UUID="aebf131c-6957-451e-8d34-ec978d9581ae" TYPE="xfs"
+						#/dev/xvdf: UUID="aebf131c-6957-451e-8d34-ec978d9581ae" TYPE="xfs"
+			#device_name mount_point file_system_type fs_mntops fs_freq fs_passno
+			nano /etc/fstab
+				/dev/xvdf       /extra_volume   ext4    defaults,nofail  
+						#UUID=aebf131c-6957-451e-8d34-ec978d9581ae  /extra_volume  xfs  defaults,nofail  0  2
+			sudo mount -a #check id the fstab file has any error
+
+aws ec2 terminate-instances --instance-ids i-YYYYYYY
+
+aws ec2 delete-security-group --group-name student16-sg

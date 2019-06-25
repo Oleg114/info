@@ -1,0 +1,34 @@
+https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ConnectToInstance.html
+
+mysql -h mysql–instance1.123456789012.us-east-1.rds.amazonaws.com -P 3306 -u mymasteruser -p
+
+http://www.informit.com/articles/article.aspx?p=377653&seqNum=6
+
+SHOW DATABASES;
+SHOW CREATE DATABASE db_name;
+SHOW TABLES;
+SHOW TABLES FROM db_name;
+DESCRIBE tbl_name ;
+
+https://linuxize.com/post/how-to-create-mysql-user-accounts-and-grant-privileges/
+
+CREATE USER 'newuser'@'localhost' IDENTIFIED BY 'user_password';
+CREATE USER 'newuser'@'%' IDENTIFIED BY 'user_password';
+GRANT ALL PRIVILEGES ON database_name.* TO 'database_user'@'localhost';
+GRANT ALL PRIVILEGES ON *.* TO 'database_user'@'localhost';
+GRANT SELECT, INSERT, DELETE ON database_name.* TO database_user@'localhost';
+
+http://www.mysqltutorial.org/mysql-create-table/
+
+CREATE TABLE IF NOT EXISTS tasks (
+    task_id INT AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    start_date DATE,
+    due_date DATE,
+    status TINYINT NOT NULL,
+    priority TINYINT NOT NULL,
+    description TEXT,
+    PRIMARY KEY (task_id)
+)  ENGINE=INNODB;
+
+INSERT INTO `members` (`full_names`,`gender`,`physical_address`,`contact_number`) VALUES ('Leonard Hofstadter','Male','Woodcrest',0845738767);  

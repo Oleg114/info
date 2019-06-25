@@ -1,0 +1,6 @@
+ aws s3 ls s3://student16-oleg/
+
+ aws s3 cp s3://student16-oleg/ . --recursive
+
+
+aws s3 sync s3://student16-oleg/source /destination/. --recursive
