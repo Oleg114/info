@@ -1,3 +1,3 @@
 # info
 some temp files
-https://github.com/Oleg114/info.git/
+https://github.com/Oleg114/info/
