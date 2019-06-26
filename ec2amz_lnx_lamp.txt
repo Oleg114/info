@@ -1,0 +1,43 @@
+
+sudo yum update -y
+sudo yum install -y httpd24 php56 php56-mysqlnd
+
+cat /etc/system-release
+
+sudo service httpd start
+sudo chkconfig httpd on
+sudo groupadd www
+sudo usermod -a -G www ec2-user
+exit
+
+groups
+#ec2-user wheel www
+
+sudo chown -R root:www /var/www
+
+sudo chmod 2775 /var/www
+find /var/www -type d -exec sudo chmod 2775 {} +
+find /var/www -type f -exec sudo chmod 0664 {} +
+
+
+cd /var/www
+mkdir inc
+cd inc
+>dbinfo.inc
+nano dbinfo.inc
+		<?php
+
+		define('DB_SERVER', 'db_instance_endpoint');
+		define('DB_USERNAME', 'tutorial_user');
+		define('DB_PASSWORD', 'master password');
+		define('DB_DATABASE', 'sample');
+
+		?>
+		
+cd /var/www/html	
+>SamplePage.php
+nano SamplePage.php
+		wget https://raw.githubusercontent.com/Oleg114/info/master/SamplePage.php
+		
+
+	
