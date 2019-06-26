@@ -39,5 +39,4 @@ cd /var/www/html
 nano SamplePage.php
 		wget https://raw.githubusercontent.com/Oleg114/info/master/SamplePage.php
 		
-
-	
+echo "<?php phpinfo(); ?>" > /var/www/html/phpinfo.php
